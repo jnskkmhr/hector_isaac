@@ -1,0 +1,28 @@
+<launch>
+    <!-- Start Isaac with odometry publisher, joint_state subscriber+articulationController-->
+
+    <!-- Load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find hector_description)/config/robot_control.yaml" command="load"/>
+
+    <!-- load the controllers -->
+
+    <!-- controller config comes from robot_control.yaml -->
+    <!-- Used controller is joint_state_controller/JointStateController and unitree_legged_control/UnitreeJointController-->
+    <!-- joint_state_controller takes publishes /hector/joint_states (sensor_msgs::JointState)-->
+    <node pkg="controller_manager" type="spawner" name="controller_spawner" respawn="false"
+          output="screen" ns="/hector" args="joint_state_controller
+          L_hip_controller L_hip2_controller L_thigh_controller L_calf_controller L_toe_controller
+          R_hip_controller R_hip2_controller R_thigh_controller R_calf_controller R_toe_controller
+         "/>
+
+    <!-- Load the URDF into the ROS Parameter Server -->
+    <param name="robot_description"
+           textfile="$(find hector_description)/xacro/robot.urdf"/>
+
+    <!-- convert joint_states to TF transforms for rviz, etc -->
+    <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"
+          respawn="false" output="screen">
+        <remap from="/joint_states" to="/hector/joint_states"/>
+    </node>
+
+</launch>
