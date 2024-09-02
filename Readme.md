@@ -1,15 +1,10 @@
 # Hector Simulation Software in ROS+IsaacSim
+Modified from https://github.com/DRCL-USC/Hector_Simulation
 
 ## HECTOR: Humanoid for Enhanced ConTrol and Open-source Research
 
 This branch is under development of the ROS+Isaac simulation for the Hector humanoid robot. \
 For humanoid ROS model with arms use the ROS_Humanoid_Simulation branch.
-
-<img src="https://github.com/DRCL-USC/Hector_Simulation/blob/Matlab_Simulation/STL%20files/Hector_picture.jpg?raw=truev" width=50% height=50%>
-
-Introduction Video: https://youtu.be/NcW-NFwjMh0
-
-Video associated with preprint "Dynamic Loco-manipulation on HECTOR: Humanoid for Enhanced ConTrol and Open-source Research": https://youtu.be/-r0QoxQgshk
 
 ## Dependencies:
 * [Boost](http://www.boost.org) (version 1.5.4 or higher)
@@ -24,7 +19,7 @@ Video associated with preprint "Dynamic Loco-manipulation on HECTOR: Humanoid fo
 
 Install dependencies via apt
 ```
-sudo apt-get install -y liblcm-dev ros-noetic-controller-manager ros-noetic-ros-control ros-noetic-ros-controllers ros-noetic-joint-state-controller ros-noetic-effort-controllers ros-noetic-velocity-controllers ros-noetic-position-controllers ros-noetic-robot-controllers ros-noetic-robot-state-publisher ros-noetic-gazebo-ros-pkgs ros-noetic-gazebo-ros-control
+sudo apt-get install -y liblcm-dev
 ```
 
 ## System Requirements:
@@ -39,14 +34,11 @@ catkin build
 
 ### launch and run simulation:
 1. Run Isaac
-
-2. Run ros controller manager
 ```bash
-roslaunch unitree_gazebo biped_isaac.launch
+~/local/.share/ov/pkg/isaac_2023.1.1/python.sh hector_ros1_env.py
 ```
-The robot should be standing on the ground
 
-3. Run hector_controller
+2. Run hector_controller
 ```bash
 roslaunch hector_control hector_control.launch
 ```

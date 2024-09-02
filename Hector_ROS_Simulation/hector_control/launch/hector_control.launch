@@ -1,3 +1,4 @@
 <launch>
+    <param name="use_sim_time" value="true" />  
     <node pkg="hector_control" type="hector_ctrl" name="hector_control" output="screen" />
 </launch>

@@ -29,9 +29,9 @@ CheatIO::CheatIO(std::string robot_name):IOInterface(), _subSpinner(1)
     // initialize msg
     std::vector<std::string> joint_names = {"L_hip", "L_hip2", "L_thigh", "L_calf", "L_toe", "R_hip", "R_hip2", "R_thigh", "R_calf", "R_toe"};
     _jointCmd.name = joint_names;
-    _jointCmd.position.resize(joint_names.size(), 0.0);
-    _jointCmd.velocity.resize(joint_names.size(), 0.0);
-    _jointCmd.effort.resize(joint_names.size(), 0.0);
+    _jointCmd.position.resize(joint_names.size());
+    _jointCmd.velocity.resize(joint_names.size());
+    _jointCmd.effort.resize(joint_names.size());
 }
 
 CheatIO::~CheatIO()
@@ -51,9 +51,9 @@ void CheatIO::sendRecv(const LowlevelCmd *cmd, LowlevelState *state)
 
 void CheatIO::sendCmd(const LowlevelCmd *cmd)
 {
+    _jointCmd.header.stamp = ros::Time::now();
     for(int i = 0; i < 10; i++){
         // set value of jointstate
-        _jointCmd.header.stamp = ros::Time::now();
         _jointCmd.position[i] = cmd->motorCmd[i].q;
         _jointCmd.velocity[i] = cmd->motorCmd[i].dq;
         _jointCmd.effort[i] = cmd->motorCmd[i].tau;

@@ -9,12 +9,8 @@ add_definitions(-DEIGEN_STACK_ALLOCATION_LIMIT=0)
 find_package(catkin REQUIRED COMPONENTS
     controller_manager
     genmsg
-    # joint_state_controller
-    # robot_state_publisher
     roscpp
     rospy
-    # gazebo_ros
-    # gazebo_msgs
     std_msgs
     tf
     geometry_msgs
@@ -22,9 +18,9 @@ find_package(catkin REQUIRED COMPONENTS
     sensor_msgs
     unitree_legged_msgs
 )
-# find_package(gazebo REQUIRED)
 find_package(Boost REQUIRED)
-#find_package(qpoases)
+find_package(Eigen3 REQUIRED)
+
 catkin_package(
     CATKIN_DEPENDS 
     unitree_legged_msgs 
@@ -34,8 +30,6 @@ include_directories(
     # include
     ${Boost_INCLUDE_DIR}
     ${catkin_INCLUDE_DIRS}
-    # ${GAZEBO_INCLUDE_DIRS}
-    #${GAZEBO_LIBRARY_DIRS}
 )
 
 # link_directories(
@@ -51,6 +45,4 @@ file(GLOB_RECURSE SRC_LIST
 "ConvexMPC/*.cpp"
 )
 add_executable(hector_ctrl src/main.cpp  ${SRC_LIST} )
-target_link_libraries(hector_ctrl ${catkin_LIBRARIES} qpOASES -pthread lcm)
-
-
+target_link_libraries(hector_ctrl ${catkin_LIBRARIES} Eigen3::Eigen qpOASES -pthread lcm)

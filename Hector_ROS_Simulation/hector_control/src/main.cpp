@@ -85,6 +85,9 @@ int main(int argc, char ** argv)
         ioInter->sendRecv(cmd, state);
         rate.sleep();
     }
+
+    // ros shutdown 
+    ros::shutdown();
     
     delete _controlData;
     return 0;
