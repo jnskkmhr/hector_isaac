@@ -9,19 +9,20 @@ add_definitions(-DEIGEN_STACK_ALLOCATION_LIMIT=0)
 find_package(catkin REQUIRED COMPONENTS
     controller_manager
     genmsg
-    joint_state_controller
-    robot_state_publisher
+    # joint_state_controller
+    # robot_state_publisher
     roscpp
     rospy
-    gazebo_ros
-    gazebo_msgs
+    # gazebo_ros
+    # gazebo_msgs
     std_msgs
     tf
     geometry_msgs
     nav_msgs
+    sensor_msgs
     unitree_legged_msgs
 )
-find_package(gazebo REQUIRED)
+# find_package(gazebo REQUIRED)
 find_package(Boost REQUIRED)
 #find_package(qpoases)
 catkin_package(
@@ -33,14 +34,14 @@ include_directories(
     # include
     ${Boost_INCLUDE_DIR}
     ${catkin_INCLUDE_DIRS}
-    ${GAZEBO_INCLUDE_DIRS}
+    # ${GAZEBO_INCLUDE_DIRS}
     #${GAZEBO_LIBRARY_DIRS}
 )
 
-link_directories(
-    include/sdk/lib
-    ${GAZEBO_LIBRARY_DIRS}
-)
+# link_directories(
+#     include/sdk/lib
+#     ${GAZEBO_LIBRARY_DIRS}
+# )
 
 add_subdirectory(third_party/qpOASES)
 

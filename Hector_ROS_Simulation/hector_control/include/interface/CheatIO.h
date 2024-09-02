@@ -9,10 +9,10 @@
 #include "unitree_legged_msgs/MotorCmd.h"
 #include "unitree_legged_msgs/MotorState.h"
 #include "unitree_legged_msgs/HighState.h"
-#include <gazebo_msgs/ModelStates.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <nav_msgs/Odometry.h>
+#include <sensor_msgs/JointState.h>
 #include <tf/transform_broadcaster.h>
 #include <string>
 
@@ -26,10 +26,10 @@ class CheatIO : public IOInterface
         void sendCmd(const LowlevelCmd *cmd);
         void recvState(LowlevelState *state);
         ros::NodeHandle _nm;
-        ros::Subscriber _servo_sub[10], _state_sub;
-        ros::Publisher _servo_pub[10];
-        unitree_legged_msgs::LowCmd _lowCmd;
+        ros::Subscriber _state_sub, _jstate_sub;
+        ros::Publisher _jstate_pub;
         unitree_legged_msgs::HighState _highState;
+        sensor_msgs::JointState _jointCmd;
         ros::AsyncSpinner _subSpinner; 
 
 
@@ -38,18 +38,7 @@ class CheatIO : public IOInterface
         void initSend(); // initialize publishers
     
         void StateCallback(const nav_msgs::Odometry& msg);
-
-        void LhipCallback(const unitree_legged_msgs::MotorState& msg);
-        void Lhip2Callback(const unitree_legged_msgs::MotorState& msg);
-        void LthighCallback(const unitree_legged_msgs::MotorState& msg);
-        void LcalfCallback(const unitree_legged_msgs::MotorState& msg);
-        void LtoeCallback(const unitree_legged_msgs::MotorState& msg);
-        void RhipCallback(const unitree_legged_msgs::MotorState& msg);
-        void Rhip2Callback(const unitree_legged_msgs::MotorState& msg);
-        void RthighCallback(const unitree_legged_msgs::MotorState& msg);
-        void RcalfCallback(const unitree_legged_msgs::MotorState& msg);
-        void RtoeCallback(const unitree_legged_msgs::MotorState& msg);
-
+        void JstateCallback(const sensor_msgs::JointState& msg);
 };   
 
 #endif

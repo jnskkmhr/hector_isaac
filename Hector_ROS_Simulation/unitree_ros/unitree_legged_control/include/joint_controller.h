@@ -49,7 +49,7 @@ public:
         realtime_tools::RealtimeBuffer<unitree_legged_msgs::MotorCmd> command;
         unitree_legged_msgs::MotorCmd lastCmd;
         unitree_legged_msgs::MotorState lastState;
-        ServoCmd servoCmd;
+        ServoCmd servoCmd; //custom struct in unitree_joint_control_tool.h
 
         UnitreeJointController();
         ~UnitreeJointController();

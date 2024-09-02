@@ -23,6 +23,7 @@ namespace unitree_legged_control
         sub_cmd.shutdown();
     }
 
+    //maybe not used
     void UnitreeJointController::setTorqueCB(const geometry_msgs::WrenchStampedConstPtr& msg)
     {
         if(isHip) sensor_torque = msg->wrench.torque.x;
@@ -163,20 +164,14 @@ namespace unitree_legged_control
             effortLimits(servoCmd.torque);
         }
 
-        // } else {
-        //     servoCmd.posStiffness = 0;
-        //     servoCmd.velStiffness = 5;
-        //     servoCmd.torque = 0;
-        // }
-        
-        // rqt set P D gains
-        // if(rqtTune) {
 #ifdef rqtTune
             double i, i_max, i_min;
             getGains(servoCmd.posStiffness,i,servoCmd.velStiffness,i_max,i_min);
 #endif
-        // } 
-
+        // NOTE:
+        // this is where actuator command is calculated.
+        // then, it is applied to joint using hardware_interface
+        // note that, you still need the interface between hardware_interface and your simulator (gazebo has transmission, but I am not sure about Isaac)
         currentPos = joint.getPosition();
         currentVel = computeVel(currentPos, (double)lastState.q, (double)lastState.dq, period.toSec());
         calcTorque = computeTorque(currentPos, currentVel, servoCmd);      
@@ -184,14 +179,12 @@ namespace unitree_legged_control
 
         joint.setCommand(calcTorque);
 
+        // update joint state
         lastState.q = currentPos;
         lastState.dq = currentVel;
-        // lastState.tauEst = calcTorque;
-        // lastState.tauEst = sensor_torque;
         lastState.tauEst = joint.getEffort();
 
-        // pub_state.publish(lastState);
-        // publish state
+        // publish joint state
         if (controller_state_publisher_ && controller_state_publisher_->trylock()) {
             controller_state_publisher_->msg_.q = lastState.q;
             controller_state_publisher_->msg_.dq = lastState.dq;
@@ -200,8 +193,6 @@ namespace unitree_legged_control
         }
 
         // printf("sensor torque%f\n", sensor_torque);
-
-        // if(joint_name == "wrist1_joint") printf("wrist1 setp:%f  getp:%f t:%f\n", servoCmd.pos, currentPos, calcTorque);
     }
 
     // Controller stopping in realtime

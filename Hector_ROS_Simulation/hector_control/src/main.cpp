@@ -77,6 +77,9 @@ int main(int argc, char ** argv)
 
     signal(SIGINT, ShutDown);
     
+    // main thread (ioInter)
+    // send low level commands as unitree_legged_msgs::LowCmd copied from "cmd"
+    // receive high level state (motor state, imu, position, velocity) and update "state"
     while(running)
     {   
         ioInter->sendRecv(cmd, state);
