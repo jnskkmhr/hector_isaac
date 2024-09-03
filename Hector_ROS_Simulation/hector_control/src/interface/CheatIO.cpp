@@ -27,11 +27,8 @@ CheatIO::CheatIO(std::string robot_name):IOInterface(), _subSpinner(1)
     cmdPanel = new KeyBoard();
 
     // initialize msg
-    std::vector<std::string> joint_names = {"L_hip", "L_hip2", "L_thigh", "L_calf", "L_toe", "R_hip", "R_hip2", "R_thigh", "R_calf", "R_toe"};
-    _jointCmd.name = joint_names;
-    _jointCmd.position.resize(joint_names.size());
-    _jointCmd.velocity.resize(joint_names.size());
-    _jointCmd.effort.resize(joint_names.size());
+    // std::vector<std::string> joint_names = {"L_hip", "L_hip2", "L_thigh", "L_calf", "L_toe", "R_hip", "R_hip2", "R_thigh", "R_calf", "R_toe"};
+    _torqueCmd.resize(10);
 }
 
 CheatIO::~CheatIO()
@@ -41,25 +38,25 @@ CheatIO::~CheatIO()
 
 void CheatIO::sendRecv(const LowlevelCmd *cmd, LowlevelState *state)
 {
-    sendCmd(cmd);
+    sendTorque(cmd);
     recvState(state);
+
     cmdPanel->updateVelCmd(state);
 
     state->userCmd = cmdPanel->getUserCmd();
     state->userValue = cmdPanel->getUserValue();
 }
 
-void CheatIO::sendCmd(const LowlevelCmd *cmd)
-{
-    _jointCmd.header.stamp = ros::Time::now();
+void CheatIO::sendTorque(const LowlevelCmd *cmd)
+{   
+    // torque = torque_ff + Kp(pos - pos_des) + Kd(vel - vel_des)
     for(int i = 0; i < 10; i++){
-        // set value of jointstate
-        _jointCmd.position[i] = cmd->motorCmd[i].q;
-        _jointCmd.velocity[i] = cmd->motorCmd[i].dq;
-        _jointCmd.effort[i] = cmd->motorCmd[i].tau;
+        _torqueCmd.data[i] = 
+        cmd->motorCmd[i].tau + 
+        cmd->motorCmd[i].Kp * (_highState.motorState[i].q - cmd->motorCmd[i].q) +
+        cmd->motorCmd[i].Kd * (_highState.motorState[i].dq - cmd->motorCmd[i].dq);
     }
-    _jstate_pub.publish(_jointCmd);
-
+    _torque_pub.publish(_torqueCmd);
 }
 
 void CheatIO::recvState(LowlevelState *state)
@@ -80,10 +77,9 @@ void CheatIO::recvState(LowlevelState *state)
 }
 
 void CheatIO::initSend(){
-    _jstate_pub = _nm.advertise<sensor_msgs::JointState>("/" + _robot_name + "/llcontroller/command", 1);
+    _torque_pub = _nm.advertise<std_msgs::Float32MultiArray>("/" + _robot_name + "/llcontroller/command", 1);
 }
 
-// gazebo controller subscribes to these messagess
 void CheatIO::initRecv(){
     _state_sub = _nm.subscribe("/" + _robot_name + "/Odometry", 1, &CheatIO::StateCallback, this);
     _jstate_sub = _nm.subscribe("/" + _robot_name + "/llcontroller/state", 1, &CheatIO::JstateCallback, this);

@@ -31,18 +31,18 @@ void runFSMController(FSM* _FSMController)
 
 int main(int argc, char ** argv)
 {
-    IOInterface *ioInter;
-    ros::init(argc, argv, "hector_control", ros::init_options::AnonymousName);
-    
+
     std::string robot_name = "hector";
     std::cout << "robot name " << robot_name << std::endl;
 
-    ioInter = new CheatIO(robot_name);
+    ros::init(argc, argv, "hector_control", ros::init_options::AnonymousName);
     ros::Rate rate(1000);
+
+    IOInterface *ioInter;
+    ioInter = new CheatIO(robot_name);
 
     double dt = 0.001;
     Biped biped;
-    // biped.setBiped();
 
     LegController* legController = new LegController(biped);
     LowlevelCmd* cmd = new LowlevelCmd();

@@ -23,6 +23,7 @@ if not rosgraph.is_master_online():
     exit()
 
 import rospy
+from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import JointState
 
@@ -81,7 +82,7 @@ class HectorRunner:
     
     def _init_subscriber(self)->None:
         self._sub_joint_cmd = rospy.Subscriber(
-            "/hector/llcontroller/command", JointState, self.joint_command_callback
+            "/hector/llcontroller/command", Float32MultiArray, self.torque_command_callback
         )
         # buffer to store the robot command
         self._llcmd = np.zeros(len(self._hector.joint_names), dtype=np.float32)
@@ -108,7 +109,6 @@ class HectorRunner:
         Step simulation based on rendering downtime
 
         """
-        # change to sim running
         self._timeline.play()
         while simulation_app.is_running():
             self._world.step(render=True)
@@ -180,7 +180,7 @@ class HectorRunner:
         self._joint_state_msg.velocity = joint_velocity[self.ctr_sim_remap]
         self._joint_state_msg.effort = joint_effort_est[self.ctr_sim_remap]
     
-    def joint_command_callback(self, data:JointState)->None:
+    def torque_command_callback(self, data:Float32MultiArray)->None:
         """
         [Summary]
 
@@ -188,7 +188,7 @@ class HectorRunner:
 
         """
         for i in range(len(self._hector.joint_names)):
-            self._llcmd[self.ctr_sim_remap[i]] = data.effort[i]
+            self._llcmd[self.ctr_sim_remap[i]] = data[i]
         self._hector.apply_effort(self._llcmd)
         print("Command received", self._llcmd)
 

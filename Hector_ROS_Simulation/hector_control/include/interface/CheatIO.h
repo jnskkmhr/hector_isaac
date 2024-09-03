@@ -9,6 +9,7 @@
 #include "unitree_legged_msgs/MotorCmd.h"
 #include "unitree_legged_msgs/MotorState.h"
 #include "unitree_legged_msgs/HighState.h"
+#include "std_msgs/Float32MultiArray.h"
 #include <geometry_msgs/WrenchStamped.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <nav_msgs/Odometry.h>
@@ -23,13 +24,13 @@ class CheatIO : public IOInterface
         ~CheatIO();
         void sendRecv(const LowlevelCmd *cmd, LowlevelState *state);
     private:
-        void sendCmd(const LowlevelCmd *cmd);
+        void sendTorque(const LowlevelCmd *cmd);
         void recvState(LowlevelState *state);
         ros::NodeHandle _nm;
         ros::Subscriber _state_sub, _jstate_sub;
-        ros::Publisher _jstate_pub;
+        ros::Publisher _torque_pub;
         unitree_legged_msgs::HighState _highState;
-        sensor_msgs::JointState _jointCmd;
+        std_msgs::Float32MultiArray _torqueCmd; // torque command = torque_ff + Kp(pos - pos_des) + Kd(vel - vel_des)
         ros::AsyncSpinner _subSpinner; 
 
 
