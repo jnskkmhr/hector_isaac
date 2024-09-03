@@ -28,7 +28,7 @@ CheatIO::CheatIO(std::string robot_name):IOInterface(), _subSpinner(1)
 
     // initialize msg
     // std::vector<std::string> joint_names = {"L_hip", "L_hip2", "L_thigh", "L_calf", "L_toe", "R_hip", "R_hip2", "R_thigh", "R_calf", "R_toe"};
-    _torqueCmd.resize(10);
+    _torqueCmd.data.resize(10);
 }
 
 CheatIO::~CheatIO()
