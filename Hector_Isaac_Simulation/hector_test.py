@@ -49,7 +49,7 @@ class HectorRunner:
         #self._init_subscriber()
         self._init_msg()
         
-        print(self._hector.joint_names)
+        self.index = 0
         
     def _create_og(self):
         # Creating an ondemand push graph with ROS Clock, everything in the ROS environment must synchronize with this clock
@@ -145,10 +145,39 @@ class HectorRunner:
         # Tick the ROS Clock
         og.Controller.evaluate_sync(self._clock_graph)
         
-        self._hector.apply_effort(np.array([0.3, -0.3, 0.0, -0.0, 0.0, 0.0, 0.0, 0.0, -0.5, -0.5], dtype=np.float32))
+        #torque = self.generate_toe_motion()
+        torque = self.generate_culf_motion()
+        self._hector.apply_effort(torque)
+        self.index += 1
 
         # Publish ROS data
         self.publish_ros_data()
+    
+    def generate_toe_motion(self):
+        torque = np.zeros(10)
+        if self.index < 500:
+            torque[-2] = -0.5
+            torque[-1] = -0.5
+        elif self.index > 500 and self.index < 1000:   
+            torque[-2] = 1.0
+            torque[-1] = 1.0
+        elif self.index > 1000:
+            self.index = 0
+        return torque
+    
+    def generate_culf_motion(self):
+        torque = np.zeros(10)
+        torque[2] = 0.1
+        torque[3] = 0.1
+        if self.index < 100:
+            torque[6] = 0.3
+            torque[7] = -0.3
+        elif self.index > 100 and self.index < 2000:   
+            torque[6] = -0.3
+            torque[7] = 0.3
+        elif self.index > 2000:
+            self.index = 0
+        return torque
     
     def _update_odometry(self)->None:
         """
@@ -216,7 +245,7 @@ def main():
         usd_path=str(Path(__file__).parent / "asset/hector_ros1.usd"),   
         prim_path="/World/hector", 
         name="hector", 
-        position=[0, 0, 0.55], 
+        position=[0, 0, 0.8], 
         ctr_sim_remap=[0, 5, 1, 6, 2, 7, 3, 8, 4, 9] # control index to simulation index (vise versa)
         )
     

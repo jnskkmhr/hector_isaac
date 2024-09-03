@@ -35,11 +35,11 @@ int main(int argc, char ** argv)
     std::string robot_name = "hector";
     std::cout << "robot name " << robot_name << std::endl;
 
-    ros::init(argc, argv, "hector_control", ros::init_options::AnonymousName);
-    ros::Rate rate(1000);
-
     IOInterface *ioInter;
+    ros::init(argc, argv, "hector_control", ros::init_options::AnonymousName);
+
     ioInter = new CheatIO(robot_name);
+    ros::Rate rate(1000);
 
     double dt = 0.001;
     Biped biped;

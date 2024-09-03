@@ -54,3 +54,5 @@
 
 # Ignore specific user settings
 /settings.json
+
+Hector_Isaac_Simulation/__pycache__
